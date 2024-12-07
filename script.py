@@ -2,6 +2,9 @@ import re
 import csv
 from collections import Counter
 
+# Suspicious Activity Threshold
+ACTIVITY_THRESHOLD = 10
+
 def analyze_log(file_path):
     log_data = []
 
@@ -48,7 +51,7 @@ def analyze_log_data(log_entries):
             suspicious_activity[entry['ip_address']] += 1
 
     # Activity Threshold Check
-    if suspicious_activity and max(suspicious_activity.values()) >= 10:
+    if suspicious_activity and max(suspicious_activity.values()) >= ACTIVITY_THRESHOLD:
         return ip_count, endpoint_count, suspicious_activity
     else:
         return ip_count, endpoint_count, {}
@@ -96,7 +99,7 @@ def save_to_csv(ip_count, endpoint_count, suspicious_activity, output_file="log_
             writer.writerow(["IP Address", "Failed Login Attempts"])
             print(f"{'IP Address':<15} {'Failed Login Attempts'}")
             for ip, count in suspicious_activity.items():
-                if count >= 10:
+                if count >= ACTIVITY_THRESHOLD:
                     writer.writerow([ip, count])
                     print(f"{ip:<15} {count}")
         else:
